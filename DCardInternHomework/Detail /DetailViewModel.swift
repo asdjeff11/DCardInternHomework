@@ -62,27 +62,27 @@ extension DetailViewModel { // get Image
     func getImage() {
         guard let url = lookUpModel?.artworkUrl100 else { return }
         
-        if ( imgDict.isInDict(hash: url) ) { // 暫存器有 就不用拉了 減少連接
+        if let img = imgDict.getImg(url: url ) {
             Task.detached(operation: { @MainActor [weak self] in
-                self?.delegate?.setImage(imgDict.getImg(hash: url)!)
+                self?.delegate?.setImage(img)
             })
-            return
         }
-        
-        Task.detached(priority: .background) {
-            let resultData = await URLAction.action.getData(url_str: url)
-            switch ( resultData ) {
-            case .failure(let error) :
-                print(error.localizedDescription)
-            case .success(let data) :
-                guard let img = UIImage(data:data) else { return }
-                //let scaleImg = UIImage.scaleImage(image: img, newSize: CGSize(width: 250 * Theme.factor, height: 250 * Theme.factor)) // 為了降低空間
-                imgDict.putIntoDict(hash: url, imgs: [img])
-                Task.detached(operation: { @MainActor [weak self] in
-                    self?.delegate?.setImage(img)
-                })
-            }
-        }
+        else {
+            Task.detached(priority: .background) {
+                let resultData = await URLAction.action.getData(url_str: url)
+                switch ( resultData ) {
+                case .failure(let error) :
+                    print(error.localizedDescription)
+                case .success(let data) :
+                    guard let img = UIImage(data:data) else { return }
+                    //let scaleImg = UIImage.scaleImage(image: img, newSize: CGSize(width: 250 * Theme.factor, height: 250 * Theme.factor)) // 為了降低空間
+                    imgDict.putIntoDict(url: url, img: img)
+                    Task.detached(operation: { @MainActor [weak self] in
+                        self?.delegate?.setImage(img)
+                    })
+                }
+            } // background thread
+        } // else
     }
 }
 

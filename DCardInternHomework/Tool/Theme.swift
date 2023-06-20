@@ -14,4 +14,16 @@ class Theme {
     static let navigationBarBG = UIColor(hex:0x006aa6)
     static let navigationBtnSize = CGRect(x:0,y:0,width: 50 * factor, height: 50 * factor)
     static let labelFont = UIFont(name: "Helvetica-Light", size: 20)!
+    
+    static var onlyDateDashFormatter: DateFormatter {
+        return customFormatter(dateType: "yyyy-MM-dd")
+    }
+    
+    static func customFormatter(dateType:String)->DateFormatter {
+        let format = DateFormatter()
+        format.locale = Locale(identifier: "zh-TW")
+        format.timeZone = TimeZone(identifier: "Asia/Taipei")
+        format.dateFormat = dateType
+        return format
+    }
 }

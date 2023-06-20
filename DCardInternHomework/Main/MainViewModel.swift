@@ -80,7 +80,7 @@ class MainViewModel {
 extension MainViewModel { // getImg
     func addPhotoTaskToFetchImg(detail:SongDetail) {
         let imgUrl = detail.artworkUrl100
-        if !imgDict.isInDict(hash: imgUrl) {
+        if !imgDict.checkImgExist(url: imgUrl) {
             let photo = Photo(url:imgUrl)
             let imageTask = ImageDownloader(photo)
             self.photos.append(photo)

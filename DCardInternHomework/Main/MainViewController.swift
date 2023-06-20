@@ -99,8 +99,8 @@ extension MainViewController:UITableViewDelegate,UITableViewDataSource {
         cell.setUpData(detail: item_detail)
         
         // later set Image
-        if ( imgDict.isInDict(hash: item_photo.url) ) { // 狀態為已完成 才顯示 , 其餘等到Task完成後刷新顯示
-            cell.setUpImage(img: imgDict.getImg(hash: item_photo.url))
+        if ( imgDict.checkImgExist(url:item_photo.url) ) { // 狀態為已完成 才顯示 , 其餘等到Task完成後刷新顯示
+            cell.setUpImage(img: imgDict.getImg(url: item_photo.url))
         }
         else if ( item_photo.state == .Failed ) { // 撈取圖片失敗
             cell.setUpImage(img: UIImage(named: "noPic"))
@@ -135,7 +135,7 @@ extension MainViewController:ImageListDelegate {
         
         let indexPath = IndexPath(row: row * 2 + 1, section: 0) // *2 because of space
         guard let cell = tableView.cellForRow(at: indexPath) as? MainCell else { return }
-        cell.setUpImage(img: imgDict.getImg(hash: photo.url))
+        cell.setUpImage(img: imgDict.getImg(url: photo.url))
     }
 }
 

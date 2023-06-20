@@ -52,7 +52,7 @@ class ImageDownloader: Operation {
             if ( url == "" ) {
                 photoRecord.state = .Failed
             }
-            else if imgDict.isInDict(hash: url) { // 本地圖片 (在列隊前 沒有 , 列隊後出現了 , 代表前面可能有人撈了一樣的圖片 所以在此判斷有了就不撈取 , 降低連線次數)
+            else if imgDict.checkImgExist(url: url) { // 本地圖片 (在列隊前 沒有 , 列隊後出現了 , 代表前面可能有人撈了一樣的圖片 所以在此判斷有了就不撈取 , 降低連線次數)
                 photoRecord.state = .Done
             }
             else {
@@ -68,7 +68,11 @@ class ImageDownloader: Operation {
                         guard let img = UIImage(data:data) else { photoRecord.state = .Failed ; return }
                         //let scaleImg = UIImage.scaleImage(image: img, newSize: CGSize(width: 200 * Theme.factor, height: 100 * Theme.factor)) // 為了降低空間
                         photoRecord.state = .Done
-                        imgDict.putIntoDict(hash: url, imgs: [img])
+                        let now = Theme.onlyDateDashFormatter.string(from: Date())
+                        let url_data = URL(string: url)!
+                        let imageStore = ImageStore(url: url, lastUsed:now )
+                        _ = db.executeQuery(query: imageStore.getUpdateQuery())
+                        imgDict.putIntoDict(url: url, img: img)
                     }
                     group.leave()
                 }

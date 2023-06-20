@@ -6,3 +6,8 @@
 //
 
 import Foundation
+extension Date {
+    func getOffsetDay( type:Calendar.Component , offset:Int)->Date {
+        return Calendar.current.date( byAdding: type, value: offset, to:self)!
+    }
+}
