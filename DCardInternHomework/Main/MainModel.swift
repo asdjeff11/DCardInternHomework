@@ -13,7 +13,7 @@ struct SongResult:Codable {
     var results:[SongDetail]
 }
 
-struct SongDetail:Codable {
+struct SongDetail:Codable,Hashable {
     //var wrapperType:String
     //var kind:String
     var artistId:Int
@@ -45,6 +45,16 @@ struct SongDetail:Codable {
     //var currency:String
     //var primaryGenreName:String
     //var isStreamable:Bool
+    
+    static func == (lhs: SongDetail, rhs: SongDetail) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(trackId)
+        hasher.combine(trackName)
+        hasher.combine(artistId)
+    }
 }
 
 struct SearchSongCondition {

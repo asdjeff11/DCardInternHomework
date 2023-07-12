@@ -12,7 +12,8 @@ protocol ImageListDelegate:BaseDelegate {
 }
 
 class MainViewModel {
-    private var songDetailList = [SongDetail]() // 各列資訊
+    private var songDetailList = [SongDetail]()  // 各列資訊
+    private var inIndex = Set<Int>()
     private var photos = [Photo]() // 各列的圖片撈取狀態
     private var searchCondition = SearchSongCondition(term: "MayDay") // 篩選條件 ( default : name:Mayday , country:nil
     weak var delegate:ImageListDelegate?
@@ -20,7 +21,7 @@ class MainViewModel {
     private var pendingOperations = PendingOperations() // thread池
     
     private final let limit = 20 // 每次撈取資料數量  需要更多 修改此值
-    private var offset = 0 // 下次要取的起始位置
+    private var offset = 1 // 下次要取的起始位置
     
     var isNothingToGet = false // 是否已經沒有資訊了 ( 不確定這是否有此case )
     var isLoading = false // 是否Operation將懸置
@@ -48,11 +49,19 @@ class MainViewModel {
             case .success(let resultsObject) :
                 if ( resultsObject.resultCount == 0 ) { self.isNothingToGet = true  } // 沒新資料
                 else {
+                    var count = 0
                     for result in resultsObject.results {
-                        self.songDetailList.append(result)
-                        self.addPhotoTaskToFetchImg(detail: result)
+                        if ( !self.inIndex.contains(result.hashValue) ) {
+                            count += 1
+                            print( String(result.trackId) + " / " + result.trackName)
+                            self.inIndex.insert(result.hashValue)
+                            self.songDetailList.append(result)
+                            self.addPhotoTaskToFetchImg(detail: result)
+                        }
+                        
                         //self.photos.append(Photo(url: result.artworkUrl100))
                     }
+                    print( "count:\(count)")
                 }
                 self.offset += self.limit
             case .failure(let error) :

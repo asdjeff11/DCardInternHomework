@@ -69,7 +69,7 @@ class ImageDownloader: Operation {
                         //let scaleImg = UIImage.scaleImage(image: img, newSize: CGSize(width: 200 * Theme.factor, height: 100 * Theme.factor)) // 為了降低空間
                         photoRecord.state = .Done
                         let now = Theme.onlyDateDashFormatter.string(from: Date())
-                        let url_data = URL(string: url)!
+                        //let url_data = URL(string: url)!
                         let imageStore = ImageStore(url: url, lastUsed:now )
                         _ = db.executeQuery(query: imageStore.getUpdateQuery())
                         imgDict.putIntoDict(url: url, img: img)
